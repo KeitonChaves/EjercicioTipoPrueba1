@@ -43,6 +43,11 @@ fun main() = runBlocking {
         val subtotal = productosSeleccionados.sumOf { it.precio }
         val total = gestor.calcularTotal(subtotal, tipoCliente)
 
+
+        println("\nProcesando pedido...")
+        launch { val estado = simularProcesamientoPedidoConErrores() }
+
+        delay(1500)
         println("\n=== RESUMEN DEL PEDIDO ===")
         productosSeleccionados.forEach {
             println("- ${it.nombre}: \$${it.precio}")
@@ -52,8 +57,9 @@ fun main() = runBlocking {
         println("IVA (19%): \$${((subtotal - (subtotal * tipoCliente.descuento)) * 0.19).toInt()}")
         println("TOTAL: \$${total}")
 
-        println("\nProcesando pedido...")
-        simularProcesamientoPedidoConErrores()
+
+
+
 
     } catch (ex: Exception) {
         println("Error inesperado: ${ex.message}. Por favor, intente nuevamente.")
@@ -70,7 +76,7 @@ suspend fun simularProcesamientoPedidoConErrores() {
     println("Estado: En Preparación")
     delay(3000)
 
-    val errorSimulado = Random.nextInt(100) < 20
+    val errorSimulado = Random.nextInt(100) < 5
     if (errorSimulado) {
         estadoActual = EstadoPedido.Error
         println("Estado: Error durante la preparación.")
